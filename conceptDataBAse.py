@@ -71,6 +71,7 @@ class DataBase:
         characters = string.ascii_letters + string.digits + string.punctuation
         return ''.join(secrets.choice(characters) for _ in range(7))
 
+
     def __del__(self):
         print('База данных была удалена')
 
@@ -109,6 +110,7 @@ class DataBase:
                 print('блокировка отменена')
         else:
             print('недостаточно прав или база пуста')
+
 
     @staticmethod
     def help():
@@ -246,21 +248,26 @@ class DataBase:
         if self.role == 'root':
             print('Недостаточно прав')
             return
+
         while True:
             filter_type = input('Выберете тип фильтра : логин/пароль >>>').lower().strip()
             if filter_type in ('логин', 'пароль'):
                 break
             print('Такой опции нет!! Повторите попытку')
+
         filterlist = self.__lfilter if filter_type == 'логин' else self.__pfilter
+
         if not filterlist:
             print('фильтры отсутствуют')
             return
+
         while True:
             print(f'текущий список фильтров: {filterlist}')
             fil = input('введите название фильтра >>>').lower().strip()
             if fil in filterlist:
                 break
             print('Фильтра не существует повторите попытку')
+
         if self.solution():
             filterlist.remove(fil)
             print(f'Измененный список фильтров: {filterlist}')
@@ -304,6 +311,7 @@ class DataBase:
                 print('изменения были произведены успешно')
             else:
                 print('операция отменена')
+
         elif self.__people == {}:
             print('База данных пуста')
         else:
@@ -333,25 +341,30 @@ class DataBase:
             if login == '':
                 print('Пустая строка! Повторите попытку')
                 continue
+
             if login in self.__message_log.values():
                 login  = ''.join([key[0] for key in self.__message_log.items() if login in key])
                 print('Ваш логин был изменен',
                       f'Ваш новый логин {login}', sep='\n')
                 del self.__message_log[login]
+
             if login not in self.__people.keys():
                 print('Логин не найден!')
                 answ = input('Желаете зарегистрироваться: Да/Нет >>>').lower()
-                if  answ == 'да':
+                if answ == 'да':
                     self.registr()
                     return
-                else:
-                    continue
+                elif answ == 'нет':
+                    print('Вход отменен')
+                    return
             break
+
         while True:
             password = input('Введите пароль >>>').strip()
             if password == '':
                 print('Пустая строка! Повторите попытку')
                 continue
+
             if password in self.__message_pas.values():
                 print('ваш предыдущий пароль был изменен',
                         f'Ваш новый пароль {self.__people[login]}', sep='\n')
@@ -365,6 +378,8 @@ class DataBase:
             print(f'Вход произведен успешно, теперь вы {login}')
             self.__instance.name = login
             self.__instance.role = 'member' if login not in self.__instance.__admname else 'root'
+        else:
+            print('Вход отменен')
 
 db = DataBase()
 db.registr()
